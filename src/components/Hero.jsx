@@ -33,6 +33,7 @@ const Hero = () => {
                             <motion.button
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
+                                onClick={() => document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' })}
                                 className="bg-brand-primary text-white px-8 py-4 rounded-2xl font-bold text-lg flex items-center gap-3 shadow-xl shadow-brand-primary/20"
                             >
                                 Shop Fresh Now
