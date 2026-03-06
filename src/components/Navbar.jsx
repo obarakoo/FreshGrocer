@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ShoppingCart, Menu, X, Leaf } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const Navbar = ({ cartCount }) => {
+const Navbar = ({ cartCount, onCartClick }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -60,6 +60,7 @@ const Navbar = ({ cartCount }) => {
               <motion.div
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
+                onClick={onCartClick}
                 className="relative cursor-pointer p-2 text-slate-600 hover:text-brand-primary transition-colors"
               >
                 <ShoppingCart size={24} />
@@ -77,7 +78,10 @@ const Navbar = ({ cartCount }) => {
 
           {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center gap-4">
-            <div className="relative cursor-pointer p-2 text-slate-600">
+            <div 
+                className="relative cursor-pointer p-2 text-slate-600"
+                onClick={onCartClick}
+            >
               <ShoppingCart size={24} />
               {cartCount > 0 && (
                 <span className="absolute top-1 right-0 bg-brand-primary text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">

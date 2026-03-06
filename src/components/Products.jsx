@@ -1,129 +1,167 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { ShoppingCart, Star, Plus } from 'lucide-react';
-import avocadoImg from '../assets/avocado.png';
-import strawberriesImg from '../assets/strawberries.png';
-import applesImg from '../assets/apples.png';
-import carrotsImg from '../assets/carrots.png';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Star, Plus, Info, X } from 'lucide-react';
 
-const products = [
-    {
-        id: 1,
-        name: "Organic Avocado",
-        price: 2.50,
-        unit: "per piece",
-        rating: 4.8,
-        reviews: 124,
-        image: avocadoImg,
-        category: "Fruits",
-        badge: "Bestseller"
-    },
-    {
-        id: 2,
-        name: "Fresh Strawberries",
-        price: 4.99,
-        unit: "250g",
-        rating: 4.9,
-        reviews: 89,
-        image: strawberriesImg,
-        category: "Berries",
-        badge: "Sweet"
-    },
-    {
-        id: 3,
-        name: "Green Apples",
-        price: 3.25,
-        unit: "1kg",
-        rating: 4.7,
-        reviews: 215,
-        image: applesImg,
-        category: "Fruits",
-        badge: "Organic"
-    },
-    {
-        id: 4,
-        name: "Fresh Carrots",
-        price: 1.80,
-        unit: "500g",
-        rating: 4.6,
-        reviews: 156,
-        image: carrotsImg,
-        category: "Vegetables",
-        badge: "Fresh"
-    }
-];
+const ProductCard = ({ product, onAddToCart, nutrition }) => {
+    const [showNutrition, setShowNutrition] = useState(false);
 
-const ProductCard = ({ product, onAddToCart }) => (
-    <motion.div
-        layout
-        initial={{ opacity: 0, scale: 0.9 }}
-        whileInView={{ opacity: 1, scale: 1 }}
-        viewport={{ once: true }}
-        whileHover={{ y: -10 }}
-        className="glass rounded-[2rem] p-6 group relative overflow-hidden flex flex-col"
-    >
-        {/* Badge */}
-        {product.badge && (
-            <div className="absolute top-4 left-4 z-10">
-                <span className="bg-brand-primary text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">
-                    {product.badge}
-                </span>
-            </div>
-        )}
-
-        {/* Favorite Button */}
-        <button className="absolute top-4 right-4 z-10 p-2 glass rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-            <Star className="text-brand-accent h-4 w-4 fill-brand-accent" />
-        </button>
-
-        {/* Image Container */}
-        <div className="relative h-48 mb-6 rounded-2xl overflow-hidden bg-slate-50 flex items-center justify-center p-4">
-            <motion.img
-                whileHover={{ scale: 1.1 }}
-                src={product.image}
-                alt={product.name}
-                className="w-full h-full object-contain mb-1"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-        </div>
-
-        {/* Content */}
-        <div className="flex-1">
-            <div className="text-brand-primary text-xs font-bold mb-1 uppercase tracking-widest">{product.category}</div>
-            <h3 className="text-xl font-bold text-slate-900 mb-2 truncate">{product.name}</h3>
-            
-            <div className="flex items-center gap-2 mb-4">
-                <div className="flex text-brand-accent">
-                    {[...Array(5)].map((_, i) => (
-                        <Star key={i} size={14} fill={i < Math.floor(product.rating) ? "currentColor" : "none"} />
-                    ))}
+    return (
+        <motion.div
+            layout
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            whileHover={{ y: -10 }}
+            className="glass rounded-[2rem] p-6 group relative overflow-hidden flex flex-col h-full bg-white"
+        >
+            {/* Badge */}
+            {product.badge && (
+                <div className="absolute top-4 left-4 z-10">
+                    <span className="bg-brand-primary text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                        {product.badge}
+                    </span>
                 </div>
-                <span className="text-slate-400 text-xs">({product.reviews})</span>
-            </div>
+            )}
 
-            <div className="flex items-center justify-between">
-                <div>
-                    <span className="text-2xl font-black text-slate-900">${product.price.toFixed(2)}</span>
-                    <span className="text-slate-400 text-sm ml-1">/ {product.unit}</span>
-                </div>
-                <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={() => onAddToCart(product)}
-                    className="p-3 bg-brand-primary text-white rounded-2xl shadow-lg shadow-brand-primary/30 hover:bg-brand-primary/90 transition-all group/btn"
+            {/* Nutrition Info Toggle */}
+            {nutrition && (
+                <button 
+                  onClick={() => setShowNutrition(!showNutrition)}
+                  className="absolute top-4 right-4 z-10 p-2 bg-slate-100 hover:bg-slate-200 rounded-full transition-colors text-slate-600"
                 >
-                    <Plus className="group-hover/btn:rotate-90 transition-transform" />
-                </motion.button>
+                  <Info size={16} />
+                </button>
+            )}
+
+            {/* Image Container */}
+            <div className="relative h-48 mb-6 rounded-2xl overflow-hidden bg-slate-50 flex items-center justify-center p-4">
+                <AnimatePresence>
+                  {showNutrition && nutrition ? (
+                    <motion.div 
+                      initial={{ opacity: 0 }} 
+                      animate={{ opacity: 1 }} 
+                      exit={{ opacity: 0 }}
+                      className="absolute inset-0 bg-brand-primary/95 text-white p-4 flex flex-col justify-center z-20 rounded-2xl"
+                    >
+                      <h4 className="font-bold mb-2">Nutrition (per 100g)</h4>
+                      <div className="text-sm space-y-1">
+                        <div className="flex justify-between"><span>Calories:</span> <span>{nutrition.calories}</span></div>
+                        <div className="flex justify-between"><span>Fat:</span> <span>{nutrition.fat}g</span></div>
+                        <div className="flex justify-between"><span>Sugar:</span> <span>{nutrition.sugar}g</span></div>
+                        <div className="flex justify-between"><span>Carbs:</span> <span>{nutrition.carbohydrates}g</span></div>
+                        <div className="flex justify-between"><span>Protein:</span> <span>{nutrition.protein}g</span></div>
+                      </div>
+                      <button 
+                        onClick={() => setShowNutrition(false)}
+                        className="absolute top-2 right-2 p-1 hover:bg-white/20 rounded-full"
+                      >
+                        <X size={14} />
+                      </button>
+                    </motion.div>
+                  ) : null}
+                </AnimatePresence>
+                <motion.img
+                    whileHover={{ scale: 1.1 }}
+                    src={product.image}
+                    alt={product.name}
+                    className="w-full h-full object-contain mb-1 drop-shadow-lg"
+                />
             </div>
-        </div>
-    </motion.div>
-);
+
+            {/* Content */}
+            <div className="flex-1 flex flex-col">
+                <div className="text-brand-primary text-xs font-bold mb-1 uppercase tracking-widest">{product.category}</div>
+                <h3 className="text-xl font-bold text-slate-900 mb-2 truncate" title={product.name}>{product.name}</h3>
+                
+                <div className="flex items-center gap-2 mb-4">
+                    <div className="flex text-brand-accent">
+                        {[...Array(5)].map((_, i) => (
+                            <Star key={i} size={14} fill={i < Math.floor(product.rating) ? "currentColor" : "none"} />
+                        ))}
+                    </div>
+                    <span className="text-slate-400 text-xs">({product.reviews})</span>
+                </div>
+
+                <div className="mt-auto flex items-center justify-between">
+                    <div>
+                        <span className="text-2xl font-black text-slate-900">${product.price.toFixed(2)}</span>
+                        <span className="text-slate-400 text-sm ml-1">/{product.unit}</span>
+                    </div>
+                    <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => onAddToCart(product)}
+                        className="p-3 bg-brand-primary text-white rounded-2xl shadow-lg shadow-brand-primary/30 hover:bg-brand-primary/90 transition-all group/btn"
+                    >
+                        <Plus className="group-hover/btn:rotate-90 transition-transform" />
+                    </motion.button>
+                </div>
+            </div>
+        </motion.div>
+    );
+};
 
 const Products = ({ onAddToCart }) => {
+    const [products, setProducts] = useState([]);
+    const [fruitsNutrition, setFruitsNutrition] = useState({});
+    const [activeCategory, setActiveCategory] = useState('All');
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                // Fetch Groceries from DummyJSON
+                const res = await fetch('https://dummyjson.com/products/category/groceries');
+                const data = await res.json();
+                
+                const mappedProducts = data.products.map(p => ({
+                    id: p.id,
+                    name: p.title,
+                    price: p.price,
+                    unit: 'pc',
+                    rating: p.rating,
+                    reviews: p.reviews?.length || Math.floor(Math.random() * 100),
+                    image: p.thumbnail,
+                    category: p.tags[0] || 'groceries',
+                    badge: p.stock < 15 ? 'Low Stock' : (p.rating > 4.5 ? 'Bestseller' : null)
+                }));
+                setProducts(mappedProducts);
+
+                // Fetch Fruit Nutrition from Fruityvice (using a common public proxy if needed, but trying allOrigins)
+                try {
+                  const fruitRes = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://www.fruityvice.com/api/fruit/all'));
+                  const fruitData = await fruitRes.json();
+                  const parsed = JSON.parse(fruitData.contents);
+                  const nutritionMap = {};
+                  parsed.forEach(fruit => {
+                      nutritionMap[fruit.name.toLowerCase()] = fruit.nutritions;
+                  });
+                  setFruitsNutrition(nutritionMap);
+                } catch (e) {
+                  console.error("Fruityvice fetch error", e);
+                }
+
+                setLoading(false);
+            } catch (err) {
+                console.error("Error fetching data:", err);
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    // Get unique categories for filter tabs
+    const categories = ['All', ...new Set(products.map(p => p.category.toLowerCase()))];
+
+    const filteredProducts = activeCategory === 'All' 
+        ? products 
+        : products.filter(p => p.category.toLowerCase() === activeCategory.toLowerCase());
+
     return (
         <section id="products" className="py-24 bg-mesh relative overflow-hidden">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
+                <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-8">
                     <div className="max-w-xl">
                         <motion.span
                             initial={{ opacity: 0 }}
@@ -143,23 +181,50 @@ const Products = ({ onAddToCart }) => {
                             We pick every item by hand to ensure only the highest quality produce reaches your kitchen.
                         </p>
                     </div>
-                    
-                    <div className="flex gap-4">
-                        <button className="px-6 py-2 rounded-full font-bold text-brand-primary border-2 border-brand-primary hover:bg-brand-primary hover:text-white transition-all">
-                            View All
-                        </button>
-                    </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                    {products.map(product => (
-                        <ProductCard 
-                            key={product.id} 
-                            product={product} 
-                            onAddToCart={onAddToCart}
-                        />
+                {/* Categories Filter */}
+                <div className="flex overflow-x-auto gap-3 mb-10 pb-4 scrollbar-hide">
+                    {categories.map((cat, idx) => (
+                        <button
+                            key={idx}
+                            onClick={() => setActiveCategory(cat)}
+                            className={`px-6 py-2.5 rounded-full font-bold whitespace-nowrap transition-all capitalize ${
+                                activeCategory.toLowerCase() === cat.toLowerCase()
+                                    ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/30'
+                                    : 'bg-white text-slate-600 border border-slate-200 hover:border-brand-primary hover:text-brand-primary'
+                            }`}
+                        >
+                            {cat}
+                        </button>
                     ))}
                 </div>
+
+                {loading ? (
+                    <div className="flex justify-center items-center py-20">
+                        <div className="w-12 h-12 border-4 border-brand-primary/20 border-t-brand-primary rounded-full animate-spin" />
+                    </div>
+                ) : (
+                    <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                        <AnimatePresence>
+                            {filteredProducts.map(product => {
+                                // check if we have nutrition data matching product name
+                                // dummyjson has 'Apple', 'Kiwi', 'Lemon' etc.
+                                const nameToMatch = product.name.split(' ')[0].toLowerCase();
+                                const nutrition = fruitsNutrition[nameToMatch] || fruitsNutrition[product.name.toLowerCase()];
+
+                                return (
+                                    <ProductCard 
+                                        key={product.id} 
+                                        product={product} 
+                                        onAddToCart={onAddToCart}
+                                        nutrition={nutrition}
+                                    />
+                                );
+                            })}
+                        </AnimatePresence>
+                    </motion.div>
+                )}
             </div>
         </section>
     );
